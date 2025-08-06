@@ -41,6 +41,13 @@ This MCP server provides comprehensive access to the DANDI Archive REST API, all
 #### LLM-Powered Metadata Enhancement
 - `enhance_dandiset_metadata`: Use LLM to enhance dandiset metadata based on text descriptions of requested modifications
 
+### Example prompts:
+
+#### Enhance Metadata with Additional Contributors
+
+Enhance the metadata of dandiset 216320 on archive https://api-staging.dandiarchive.org/api to include Stephanie Prince. Show me the new metadata for approval, and then modify the metadata of the dataset with the new metadata.
+
+
 ## Configuration
 
 ### Environment Variables
