@@ -87,10 +87,22 @@ class DandiMcpServer {
   private axios: AxiosInstance;
 
   constructor() {
+    // Derive version from package.json to keep single source of truth
+    // Note: JSON import works at runtime because build emits a copy of package.json to project root.
+    // For TypeScript type-safety without changing tsconfig, we read via fs at runtime.
+    const pkgJsonPath = path.resolve(__dirname, "..", "package.json");
+    let pkgVersion = "0.0.0";
+    try {
+      const pkgRaw = fs.readFileSync(pkgJsonPath, "utf-8");
+      pkgVersion = JSON.parse(pkgRaw).version || pkgVersion;
+    } catch {
+      // fallback to default if reading fails
+    }
+
     this.server = new Server(
       {
         name: "dandi-mcp",
-        version: "0.1.0",
+        version: pkgVersion,
       },
       {
         capabilities: {
