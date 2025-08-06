@@ -428,13 +428,26 @@ class DandiMcpServer {
         // LLM-powered metadata enhancement
         {
           name: "enhance_dandiset_metadata",
-          description: "Use LLM to enhance dandiset metadata based on text descriptions of requested modifications",
+          description: "Use LLM to enhance dandiset metadata based on text descriptions of requested modifications. Can either fetch metadata automatically using dandiset_id or accept current_metadata directly.",
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: {
+                type: "string",
+                description: "Custom API base URL (optional)"
+              },
+              dandiset_id: {
+                type: "string",
+                description: "Dandiset identifier (6 digits) - used to fetch metadata automatically"
+              },
+              version: {
+                type: "string",
+                description: "Version identifier (e.g., 'draft' or '0.230101.1234')",
+                default: "draft"
+              },
               current_metadata: {
                 type: "object",
-                description: "Current dandiset metadata (JSON object following DANDI schema)"
+                description: "Current dandiset metadata (JSON object following DANDI schema) - alternative to fetching via dandiset_id"
               },
               modification_request: {
                 type: "string",
@@ -447,7 +460,11 @@ class DandiMcpServer {
                 default: "gemini-flash"
               }
             },
-            required: ["current_metadata", "modification_request"]
+            required: ["modification_request"],
+            anyOf: [
+              { required: ["dandiset_id"] },
+              { required: ["current_metadata"] }
+            ]
           },
         },
       ],
@@ -818,6 +835,9 @@ class DandiMcpServer {
   // LLM-powered metadata enhancement
   private async enhanceDandisetMetadata(args: any) {
     const { 
+      api_base_url,
+      dandiset_id,
+      version = "draft",
       current_metadata, 
       modification_request, 
       llm_provider = "gemini-flash" 
@@ -831,18 +851,67 @@ class DandiMcpServer {
       );
     }
 
+    // Validate input parameters
+    if (!dandiset_id && !current_metadata) {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        "Either dandiset_id or current_metadata must be provided"
+      );
+    }
+
     try {
+      let metadata = current_metadata;
+
+      // Fetch metadata if dandiset_id is provided
+      if (dandiset_id) {
+        const axios = this.getAxiosInstance(api_base_url);
+        
+        try {
+          console.error(`[DEBUG] Fetching metadata for dandiset ${dandiset_id}, version ${version}`);
+          const response = await axios.get(`/dandisets/${dandiset_id}/versions/${version}/`);
+          metadata = response.data;
+          
+          if (!metadata) {
+            throw new McpError(
+              ErrorCode.InvalidRequest,
+              `No metadata found for dandiset ${dandiset_id}, version ${version}`
+            );
+          }
+          
+          console.error(`[DEBUG] Successfully fetched metadata, size: ${JSON.stringify(metadata).length} characters`);
+        } catch (fetchError: any) {
+          if (this.isAxiosError(fetchError)) {
+            const status = fetchError.response?.status;
+            const message = fetchError.response?.data?.detail || fetchError.message;
+            throw new McpError(
+              ErrorCode.InvalidRequest,
+              `Failed to fetch metadata for dandiset ${dandiset_id}: ${message} (status: ${status})`
+            );
+          }
+          throw fetchError;
+        }
+      }
+
       // Generate enhancement using LLM
       const enhancedMetadata = await this.generateMetadataEnhancement(
-        current_metadata,
+        metadata,
         modification_request,
         llm_provider
       );
 
+      const result = {
+        enhanced_metadata: enhancedMetadata,
+        source: dandiset_id ? {
+          dandiset_id,
+          version,
+          api_base_url: api_base_url || DANDI_API_BASE_URL
+        } : "provided_directly"
+      };
+
       return {
         content: [{
           type: "text",
-          text: JSON.stringify(enhancedMetadata, null, 2),
+          text: JSON.stringify(result, null, 2),
         }],
       };
 
@@ -1069,6 +1138,11 @@ Please provide the enhanced metadata as a valid JSON object:`;
     }
 
     return result;
+  }
+
+  // Helper method to check if error is AxiosError
+  private isAxiosError(error: any): boolean {
+    return axios.isAxiosError(error);
   }
 
   // Error handling helper
