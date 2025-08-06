@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "AccessType": {
+      "description": "An enumeration of access status options",
+      "enum": [
+        "dandi:OpenAccess",
+        "dandi:EmbargoedAccess"
+      ],
+      "title": "AccessType",
+      "type": "string"
+    },
+    "ContactPoint": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "ContactPoint",
+          "default": "ContactPoint",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of contact.",
+          "nskey": "schema",
+          "title": "Email"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A Web page to find information on how to contact.",
+          "nskey": "schema",
+          "title": "URL"
+        }
+      },
+      "required": [
+        "schemaKey"
+      ],
+      "title": "Contact Point",
+      "type": "object"
+    }
+  },
+  "description": "Information about access options for the dataset",
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "AccessRequirements",
+      "default": "AccessRequirements",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/AccessType",
+      "description": "The access status of the item.",
+      "nskey": "dandi",
+      "title": "Access status"
+    },
+    "contactPoint": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContactPoint"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Who or where to look for information about access.",
+      "nskey": "schema",
+      "title": "Contact Point",
+      "type": "object"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Information about access requirements when embargoed or restricted",
+      "nskey": "schema",
+      "title": "Description"
+    },
+    "embargoedUntil": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Date on which embargo ends.",
+      "nskey": "dandi",
+      "rangeIncludes": "schema:Date",
+      "readOnly": true,
+      "title": "Embargo end date"
+    }
+  },
+  "required": [
+    "schemaKey",
+    "status"
+  ],
+  "title": "Access Requirements",
+  "type": "object"
+}

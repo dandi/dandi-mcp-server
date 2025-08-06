@@ -1,24 +1,29 @@
 {
-  "name": "dandi-mcp",
-  "version": "0.1.0",
-  "description": "Read, write, and edit dandiset and asset metadata",
+  "name": "dandi-mcp-server",
+  "version": "0.2.0",
+  "description": "DANDI Archive MCP Server with REST API access and LLM-powered metadata enhancement",
   "private": true,
   "type": "module",
   "bin": {
-    "dandi-mcp": "./build/index.js"
+    "dandi-mcp-server": "./build/index.js"
   },
   "files": [
     "build"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "prepare": "npm run build",
+    "extract-schema": "cd scripts && python3 -m pip install -r requirements.txt --break-system-packages && python3 extract_schema.py",
+    "build": "npm run extract-schema && tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build-only": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "npm run build-only",
     "watch": "tsc --watch",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",
-    "axios": "^1.11.0"
+    "axios": "^1.11.0",
+    "@google/generative-ai": "^0.15.0",
+    "zod": "^3.22.0",
+    "ajv": "^8.12.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

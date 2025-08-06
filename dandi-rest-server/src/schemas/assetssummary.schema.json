@@ -1,0 +1,386 @@
+{
+  "$defs": {
+    "ApproachType": {
+      "description": "Identifier for approach used",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "ApproachType",
+          "default": "ApproachType",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "format": "uri",
+          "maxLength": 1000,
+          "minLength": 1,
+          "nskey": "schema",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the item.",
+          "nskey": "schema",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "schemaKey"
+      ],
+      "title": "Approach Type",
+      "type": "object"
+    },
+    "MeasurementTechniqueType": {
+      "description": "Identifier for measurement technique used",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "MeasurementTechniqueType",
+          "default": "MeasurementTechniqueType",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "format": "uri",
+          "maxLength": 1000,
+          "minLength": 1,
+          "nskey": "schema",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the item.",
+          "nskey": "schema",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "schemaKey"
+      ],
+      "title": "Measurement Technique Type",
+      "type": "object"
+    },
+    "SpeciesType": {
+      "description": "Identifier for species of the sample",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "SpeciesType",
+          "default": "SpeciesType",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "format": "uri",
+          "maxLength": 1000,
+          "minLength": 1,
+          "nskey": "schema",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the item.",
+          "nskey": "schema",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "schemaKey"
+      ],
+      "title": "Species Type",
+      "type": "object"
+    },
+    "StandardsType": {
+      "description": "Identifier for data standard used",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "StandardsType",
+          "default": "StandardsType",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "identifier": {
+          "default": null,
+          "description": "The identifier can be any url or a compact URI, preferably supported by identifiers.org.",
+          "format": "uri",
+          "maxLength": 1000,
+          "minLength": 1,
+          "nskey": "schema",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the item.",
+          "nskey": "schema",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "schemaKey"
+      ],
+      "title": "Standards Type",
+      "type": "object"
+    }
+  },
+  "description": "Summary over assets contained in a dandiset (published or not)",
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "AssetsSummary",
+      "default": "AssetsSummary",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "numberOfBytes": {
+      "readOnly": true,
+      "sameas": "schema:contentSize",
+      "title": "Number of Bytes",
+      "type": "integer"
+    },
+    "numberOfFiles": {
+      "readOnly": true,
+      "title": "Number of Files",
+      "type": "integer"
+    },
+    "numberOfSubjects": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "readOnly": true,
+      "title": "Number of Subjects"
+    },
+    "numberOfSamples": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "readOnly": true,
+      "title": "Number of Samples"
+    },
+    "numberOfCells": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "readOnly": true,
+      "title": "Number of Cells"
+    },
+    "dataStandard": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/StandardsType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "readOnly": true,
+      "title": "Data Standard"
+    },
+    "approach": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/ApproachType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "readOnly": true,
+      "title": "Approach"
+    },
+    "measurementTechnique": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/MeasurementTechniqueType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "readOnly": true,
+      "title": "Measurement Technique"
+    },
+    "variableMeasured": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "readOnly": true,
+      "title": "Variable Measured"
+    },
+    "species": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/SpeciesType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "readOnly": true,
+      "title": "Species"
+    }
+  },
+  "required": [
+    "numberOfBytes",
+    "numberOfFiles",
+    "schemaKey"
+  ],
+  "title": "Assets Summary",
+  "type": "object"
+}

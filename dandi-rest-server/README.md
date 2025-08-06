@@ -38,7 +38,18 @@ This MCP server provides comprehensive access to the DANDI Archive REST API, all
 - `get_info`: Get DANDI Archive API information
 - `get_stats`: Get DANDI Archive statistics
 
-## Authentication
+#### LLM-Powered Metadata Enhancement
+- `enhance_dandiset_metadata`: Use LLM to enhance dandiset metadata based on text descriptions of requested modifications
+
+## Configuration
+
+### Environment Variables
+
+- `DANDI_API_BASE_URL` (optional): Custom base URL for the DANDI API. Defaults to `https://api.dandiarchive.org/api`
+- `DANDI_API_TOKEN` (optional): API token for authentication when performing write operations
+- `GEMINI_API_KEY` (optional): Google Gemini API key for LLM-powered metadata enhancement features
+
+### Authentication
 
 For operations that require authentication (creating, updating, deleting dandisets), you need to provide a DANDI API token:
 

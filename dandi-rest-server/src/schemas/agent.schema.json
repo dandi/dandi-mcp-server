@@ -1,0 +1,64 @@
+{
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Agent",
+      "default": "Agent",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Identifier for an agent.",
+      "nskey": "schema",
+      "title": "Identifier"
+    },
+    "name": {
+      "nskey": "schema",
+      "title": "Name",
+      "type": "string"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "URL"
+    }
+  },
+  "required": [
+    "name",
+    "schemaKey"
+  ],
+  "title": "Agent",
+  "type": "object"
+}

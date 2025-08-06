@@ -1,0 +1,72 @@
+{
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Software",
+      "default": "Software",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "pattern": "^RRID:.*",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "RRID of the software from scicrunch.org.",
+      "nskey": "schema",
+      "title": "Research resource identifier"
+    },
+    "name": {
+      "nskey": "schema",
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "nskey": "schema",
+      "title": "Version",
+      "type": "string"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Web page for the software.",
+      "nskey": "schema",
+      "title": "URL"
+    }
+  },
+  "required": [
+    "name",
+    "schemaKey",
+    "version"
+  ],
+  "title": "Software",
+  "type": "object"
+}

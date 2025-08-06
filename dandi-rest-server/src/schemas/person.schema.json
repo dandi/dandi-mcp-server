@@ -1,0 +1,223 @@
+{
+  "$defs": {
+    "Affiliation": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "Affiliation",
+          "default": "Affiliation",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "pattern": "^https://ror.org/[a-z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an ror.org identifier for institutions.",
+          "nskey": "schema",
+          "title": "A ror.org identifier"
+        },
+        "name": {
+          "description": "Name of organization",
+          "nskey": "schema",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "schemaKey"
+      ],
+      "title": "Affiliation",
+      "type": "object"
+    },
+    "RoleType": {
+      "description": "An enumeration of roles",
+      "enum": [
+        "dcite:Author",
+        "dcite:Conceptualization",
+        "dcite:ContactPerson",
+        "dcite:DataCollector",
+        "dcite:DataCurator",
+        "dcite:DataManager",
+        "dcite:FormalAnalysis",
+        "dcite:FundingAcquisition",
+        "dcite:Investigation",
+        "dcite:Maintainer",
+        "dcite:Methodology",
+        "dcite:Producer",
+        "dcite:ProjectLeader",
+        "dcite:ProjectManager",
+        "dcite:ProjectMember",
+        "dcite:ProjectAdministration",
+        "dcite:Researcher",
+        "dcite:Resources",
+        "dcite:Software",
+        "dcite:Supervision",
+        "dcite:Validation",
+        "dcite:Visualization",
+        "dcite:Funder",
+        "dcite:Sponsor",
+        "dcite:StudyParticipant",
+        "dcite:Affiliation",
+        "dcite:EthicsApproval",
+        "dcite:Other"
+      ],
+      "title": "RoleType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Person",
+      "default": "Person",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}-\\d{4}-\\d{4}-(\\d{3}X|\\d{4})$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "An ORCID (orcid.org) identifier for an individual.",
+      "nskey": "schema",
+      "title": "An ORCID identifier"
+    },
+    "name": {
+      "description": "Use the format: familyname, given names ...",
+      "nskey": "schema",
+      "title": "Use Last, First. Example: Lovelace, Augusta Ada",
+      "type": "string"
+    },
+    "email": {
+      "anyOf": [
+        {
+          "format": "email",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Email"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "URL"
+    },
+    "roleName": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/RoleType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Role(s) of the contributor. Multiple roles can be selected.",
+      "nskey": "schema",
+      "title": "Role"
+    },
+    "includeInCitation": {
+      "default": true,
+      "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+      "nskey": "dandi",
+      "title": "Include contributor in citation",
+      "type": "boolean"
+    },
+    "awardNumber": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Identifier associated with a sponsored or gift award.",
+      "nskey": "dandi",
+      "title": "Identifier for an award"
+    },
+    "affiliation": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Affiliation"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "An organization that this person is affiliated with.",
+      "nskey": "schema",
+      "title": "Affiliation"
+    }
+  },
+  "required": [
+    "name",
+    "schemaKey"
+  ],
+  "title": "Person",
+  "type": "object"
+}

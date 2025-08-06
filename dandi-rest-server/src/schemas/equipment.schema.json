@@ -1,0 +1,64 @@
+{
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Equipment",
+      "default": "Equipment",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Identifier"
+    },
+    "name": {
+      "description": "A name for the equipment.",
+      "maxLength": 150,
+      "nskey": "schema",
+      "title": "Title",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The description of the equipment.",
+      "nskey": "schema",
+      "title": "Description"
+    }
+  },
+  "required": [
+    "name",
+    "schemaKey"
+  ],
+  "title": "Equipment",
+  "type": "object"
+}

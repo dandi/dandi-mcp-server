@@ -1,0 +1,165 @@
+{
+  "$defs": {
+    "RoleType": {
+      "description": "An enumeration of roles",
+      "enum": [
+        "dcite:Author",
+        "dcite:Conceptualization",
+        "dcite:ContactPerson",
+        "dcite:DataCollector",
+        "dcite:DataCurator",
+        "dcite:DataManager",
+        "dcite:FormalAnalysis",
+        "dcite:FundingAcquisition",
+        "dcite:Investigation",
+        "dcite:Maintainer",
+        "dcite:Methodology",
+        "dcite:Producer",
+        "dcite:ProjectLeader",
+        "dcite:ProjectManager",
+        "dcite:ProjectMember",
+        "dcite:ProjectAdministration",
+        "dcite:Researcher",
+        "dcite:Resources",
+        "dcite:Software",
+        "dcite:Supervision",
+        "dcite:Validation",
+        "dcite:Visualization",
+        "dcite:Funder",
+        "dcite:Sponsor",
+        "dcite:StudyParticipant",
+        "dcite:Affiliation",
+        "dcite:EthicsApproval",
+        "dcite:Other"
+      ],
+      "title": "RoleType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Contributor",
+      "default": "Contributor",
+      "enum": [
+        "Contributor",
+        "Organization",
+        "Person"
+      ],
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Use a common identifier such as ORCID (orcid.org) for people or ROR (ror.org) for institutions.",
+      "nskey": "schema",
+      "title": "A common identifier"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Name"
+    },
+    "email": {
+      "anyOf": [
+        {
+          "format": "email",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Email"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "URL"
+    },
+    "roleName": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/RoleType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Role(s) of the contributor. Multiple roles can be selected.",
+      "nskey": "schema",
+      "title": "Role"
+    },
+    "includeInCitation": {
+      "default": true,
+      "description": "A flag to indicate whether a contributor should be included when generating a citation for the item.",
+      "nskey": "dandi",
+      "title": "Include contributor in citation",
+      "type": "boolean"
+    },
+    "awardNumber": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Identifier associated with a sponsored or gift award.",
+      "nskey": "dandi",
+      "title": "Identifier for an award"
+    }
+  },
+  "required": [
+    "schemaKey"
+  ],
+  "title": "Contributor",
+  "type": "object"
+}

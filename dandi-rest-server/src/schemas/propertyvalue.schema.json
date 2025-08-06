@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "IdentifierType": {
+      "description": "An enumeration of identifiers",
+      "enum": [
+        "dandi:doi",
+        "dandi:orcid",
+        "dandi:ror",
+        "dandi:dandi",
+        "dandi:rrid"
+      ],
+      "title": "IdentifierType",
+      "type": "string"
+    },
+    "PropertyValue": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "PropertyValue",
+          "default": "PropertyValue",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "maxValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "nskey": "schema",
+          "title": "Max Value"
+        },
+        "minValue": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "nskey": "schema",
+          "title": "Min Value"
+        },
+        "unitText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "nskey": "schema",
+          "title": "Unit Text"
+        },
+        "value": {
+          "anyOf": [
+            {},
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "description": "The value associated with this property.",
+          "nskey": "schema",
+          "title": "Value"
+        },
+        "valueReference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PropertyValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "nskey": "schema",
+          "title": "Value Reference",
+          "type": "object"
+        },
+        "propertyID": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IdentifierType"
+            },
+            {
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A commonly used identifier for the characteristic represented by the property. For example, a known prefix like DOI or a full URL.",
+          "nskey": "schema",
+          "title": "Property ID",
+          "type": "object"
+        }
+      },
+      "required": [
+        "schemaKey",
+        "value"
+      ],
+      "title": "Property Value",
+      "type": "object"
+    }
+  },
+  "$ref": "#/$defs/PropertyValue"
+}

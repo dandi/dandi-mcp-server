@@ -1,0 +1,186 @@
+{
+  "$defs": {
+    "RelationType": {
+      "description": "An enumeration of resource relations",
+      "enum": [
+        "dcite:IsCitedBy",
+        "dcite:Cites",
+        "dcite:IsSupplementTo",
+        "dcite:IsSupplementedBy",
+        "dcite:IsContinuedBy",
+        "dcite:Continues",
+        "dcite:Describes",
+        "dcite:IsDescribedBy",
+        "dcite:HasMetadata",
+        "dcite:IsMetadataFor",
+        "dcite:HasVersion",
+        "dcite:IsVersionOf",
+        "dcite:IsNewVersionOf",
+        "dcite:IsPreviousVersionOf",
+        "dcite:IsPartOf",
+        "dcite:HasPart",
+        "dcite:IsReferencedBy",
+        "dcite:References",
+        "dcite:IsDocumentedBy",
+        "dcite:Documents",
+        "dcite:IsCompiledBy",
+        "dcite:Compiles",
+        "dcite:IsVariantFormOf",
+        "dcite:IsOriginalFormOf",
+        "dcite:IsIdenticalTo",
+        "dcite:IsReviewedBy",
+        "dcite:Reviews",
+        "dcite:IsDerivedFrom",
+        "dcite:IsSourceOf",
+        "dcite:IsRequiredBy",
+        "dcite:Requires",
+        "dcite:Obsoletes",
+        "dcite:IsObsoletedBy",
+        "dcite:IsPublishedIn"
+      ],
+      "title": "RelationType",
+      "type": "string"
+    },
+    "ResourceType": {
+      "description": "An enumeration of resource types",
+      "enum": [
+        "dcite:Audiovisual",
+        "dcite:Book",
+        "dcite:BookChapter",
+        "dcite:Collection",
+        "dcite:ComputationalNotebook",
+        "dcite:ConferencePaper",
+        "dcite:ConferenceProceeding",
+        "dcite:DataPaper",
+        "dcite:Dataset",
+        "dcite:Dissertation",
+        "dcite:Event",
+        "dcite:Image",
+        "dcite:Instrument",
+        "dcite:InteractiveResource",
+        "dcite:Journal",
+        "dcite:JournalArticle",
+        "dcite:Model",
+        "dcite:OutputManagementPlan",
+        "dcite:PeerReview",
+        "dcite:PhysicalObject",
+        "dcite:Preprint",
+        "dcite:Report",
+        "dcite:Service",
+        "dcite:Software",
+        "dcite:Sound",
+        "dcite:Standard",
+        "dcite:StudyRegistration",
+        "dcite:Text",
+        "dcite:Workflow",
+        "dcite:Other"
+      ],
+      "title": "ResourceType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Resource",
+      "default": "Resource",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Identifier"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "A title of the resource"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "URL of the resource"
+    },
+    "repository": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Name of the repository in which the resource is housed.",
+      "nskey": "dandi",
+      "title": "Name of the repository"
+    },
+    "relation": {
+      "$ref": "#/$defs/RelationType",
+      "description": "Indicates how the resource is related to the dataset. This relation should satisfy: dandiset <relation> resource.",
+      "nskey": "dandi",
+      "title": "Resource relation"
+    },
+    "resourceType": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResourceType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The type of resource.",
+      "nskey": "dandi",
+      "title": "Resource type",
+      "type": "object"
+    }
+  },
+  "required": [
+    "relation",
+    "schemaKey"
+  ],
+  "title": "Resource",
+  "type": "object"
+}

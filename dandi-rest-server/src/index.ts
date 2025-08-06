@@ -19,10 +19,23 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import axios, { AxiosInstance, AxiosError } from "axios";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // DANDI API configuration
-const DANDI_API_BASE_URL = "https://api.dandiarchive.org/api";
+const DANDI_API_BASE_URL = process.env.DANDI_API_BASE_URL || "https://api.dandiarchive.org/api";
 const DANDI_API_TOKEN = process.env.DANDI_API_TOKEN; // Optional authentication token
+
+// LLM configuration
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
+
+// Get current directory for schema files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const schemasDir = path.join(__dirname, "schemas");
 
 // Type definitions for DANDI API responses
 interface DandisetSummary {
@@ -185,6 +198,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               page: { type: "number", description: "Page number" },
               page_size: { type: "number", description: "Number of results per page (max 1000)" },
               ordering: { type: "string", description: "Field to order by (id, name, modified, size, stars)" },
@@ -203,6 +217,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier (6 digits)" },
             },
             required: ["dandiset_id"],
@@ -214,6 +229,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               name: { type: "string", description: "Name of the dandiset" },
               metadata: { type: "object", description: "Metadata for the dandiset" },
               embargo: { type: "boolean", description: "Whether to embargo the dandiset", default: false },
@@ -227,6 +243,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
             },
             required: ["dandiset_id"],
@@ -238,6 +255,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               star: { type: "boolean", description: "True to star, false to unstar" },
             },
@@ -251,6 +269,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               page: { type: "number", description: "Page number" },
               page_size: { type: "number", description: "Number of results per page" },
@@ -264,6 +283,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               version: { type: "string", description: "Version identifier (e.g., 'draft' or '0.230101.1234')" },
             },
@@ -276,6 +296,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               version: { type: "string", description: "Version identifier" },
               name: { type: "string", description: "New name for the version" },
@@ -290,6 +311,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               version: { type: "string", description: "Version identifier (typically 'draft')" },
             },
@@ -303,6 +325,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               version: { type: "string", description: "Version identifier" },
               page: { type: "number", description: "Page number" },
@@ -320,6 +343,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               asset_id: { type: "string", description: "Asset identifier (UUID)" },
             },
             required: ["asset_id"],
@@ -331,6 +355,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               asset_id: { type: "string", description: "Asset identifier (UUID)" },
               content_disposition: { 
                 type: "string", 
@@ -348,6 +373,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               version: { type: "string", description: "Version identifier" },
               asset_id: { type: "string", description: "Asset identifier" },
@@ -361,7 +387,9 @@ class DandiMcpServer {
           description: "Get information about the currently authenticated user",
           inputSchema: {
             type: "object",
-            properties: {},
+            properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
+            },
           },
         },
         {
@@ -370,6 +398,7 @@ class DandiMcpServer {
           inputSchema: {
             type: "object",
             properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               username: { type: "string", description: "Username to search for" },
             },
             required: ["username"],
@@ -381,7 +410,9 @@ class DandiMcpServer {
           description: "Get DANDI Archive API information",
           inputSchema: {
             type: "object",
-            properties: {},
+            properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
+            },
           },
         },
         {
@@ -389,7 +420,34 @@ class DandiMcpServer {
           description: "Get DANDI Archive statistics",
           inputSchema: {
             type: "object",
-            properties: {},
+            properties: {
+              api_base_url: { type: "string", description: "Custom API base URL (optional)" },
+            },
+          },
+        },
+        // LLM-powered metadata enhancement
+        {
+          name: "enhance_dandiset_metadata",
+          description: "Use LLM to enhance dandiset metadata based on text descriptions of requested modifications",
+          inputSchema: {
+            type: "object",
+            properties: {
+              current_metadata: {
+                type: "object",
+                description: "Current dandiset metadata (JSON object following DANDI schema)"
+              },
+              modification_request: {
+                type: "string",
+                description: "Plain text description of requested modifications/additions to the metadata"
+              },
+              llm_provider: {
+                type: "string",
+                enum: ["gemini-flash"],
+                description: "LLM provider to use for enhancement",
+                default: "gemini-flash"
+              }
+            },
+            required: ["current_metadata", "modification_request"]
           },
         },
       ],
@@ -439,16 +497,19 @@ class DandiMcpServer {
             return await this.getAssetValidation(request.params.arguments);
 
           case "get_current_user":
-            return await this.getCurrentUser();
+            return await this.getCurrentUser(request.params.arguments);
 
           case "search_users":
             return await this.searchUsers(request.params.arguments);
 
           case "get_info":
-            return await this.getInfo();
+            return await this.getInfo(request.params.arguments);
 
           case "get_stats":
-            return await this.getStats();
+            return await this.getStats(request.params.arguments);
+
+          case "enhance_dandiset_metadata":
+            return await this.enhanceDandisetMetadata(request.params.arguments);
 
           default:
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
@@ -459,21 +520,40 @@ class DandiMcpServer {
     });
   }
 
+  // Helper method to get axios instance with custom base URL
+  private getAxiosInstance(customBaseUrl?: string): AxiosInstance {
+    if (customBaseUrl) {
+      // Create a new axios instance with custom base URL
+      return axios.create({
+        baseURL: customBaseUrl,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(DANDI_API_TOKEN && { 'Authorization': `token ${DANDI_API_TOKEN}` }),
+        },
+      });
+    }
+    // Use the default instance
+    return this.axios;
+  }
+
   // Tool implementation methods
   private async listDandisets(args: any) {
+    const { api_base_url, ...otherArgs } = args || {};
+    const axios = this.getAxiosInstance(api_base_url);
     const params = new URLSearchParams();
     
-    if (args?.page) params.append('page', String(args.page));
-    if (args?.page_size) params.append('page_size', String(args.page_size));
-    if (args?.ordering) params.append('ordering', args.ordering);
-    if (args?.draft !== undefined) params.append('draft', String(args.draft));
-    if (args?.empty !== undefined) params.append('empty', String(args.empty));
-    if (args?.embargoed !== undefined) params.append('embargoed', String(args.embargoed));
-    if (args?.user) params.append('user', args.user);
-    if (args?.starred !== undefined) params.append('starred', String(args.starred));
-    if (args?.search) params.append('search', args.search);
+    if (otherArgs?.page) params.append('page', String(otherArgs.page));
+    if (otherArgs?.page_size) params.append('page_size', String(otherArgs.page_size));
+    if (otherArgs?.ordering) params.append('ordering', otherArgs.ordering);
+    if (otherArgs?.draft !== undefined) params.append('draft', String(otherArgs.draft));
+    if (otherArgs?.empty !== undefined) params.append('empty', String(otherArgs.empty));
+    if (otherArgs?.embargoed !== undefined) params.append('embargoed', String(otherArgs.embargoed));
+    if (otherArgs?.user) params.append('user', otherArgs.user);
+    if (otherArgs?.starred !== undefined) params.append('starred', String(otherArgs.starred));
+    if (otherArgs?.search) params.append('search', otherArgs.search);
 
-    const response = await this.axios.get(`/dandisets/?${params.toString()}`);
+    const response = await axios.get(`/dandisets/?${params.toString()}`);
     
     return {
       content: [{
@@ -484,8 +564,9 @@ class DandiMcpServer {
   }
 
   private async getDandiset(args: any) {
-    const { dandiset_id } = args;
-    const response = await this.axios.get(`/dandisets/${dandiset_id}/`);
+    const { api_base_url, dandiset_id } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get(`/dandisets/${dandiset_id}/`);
     
     return {
       content: [{
@@ -496,10 +577,11 @@ class DandiMcpServer {
   }
 
   private async createDandiset(args: any) {
-    const { name, metadata = {}, embargo = false } = args;
+    const { api_base_url, name, metadata = {}, embargo = false } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     const params = embargo ? '?embargo=true' : '';
     
-    const response = await this.axios.post(`/dandisets/${params}`, {
+    const response = await axios.post(`/dandisets/${params}`, {
       name,
       metadata,
     });
@@ -513,8 +595,9 @@ class DandiMcpServer {
   }
 
   private async deleteDandiset(args: any) {
-    const { dandiset_id } = args;
-    await this.axios.delete(`/dandisets/${dandiset_id}/`);
+    const { api_base_url, dandiset_id } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    await axios.delete(`/dandisets/${dandiset_id}/`);
     
     return {
       content: [{
@@ -525,10 +608,11 @@ class DandiMcpServer {
   }
 
   private async starDandiset(args: any) {
-    const { dandiset_id, star } = args;
+    const { api_base_url, dandiset_id, star } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     
     if (star) {
-      await this.axios.post(`/dandisets/${dandiset_id}/star/`);
+      await axios.post(`/dandisets/${dandiset_id}/star/`);
       return {
         content: [{
           type: "text",
@@ -536,7 +620,7 @@ class DandiMcpServer {
         }],
       };
     } else {
-      await this.axios.delete(`/dandisets/${dandiset_id}/star/`);
+      await axios.delete(`/dandisets/${dandiset_id}/star/`);
       return {
         content: [{
           type: "text",
@@ -547,13 +631,14 @@ class DandiMcpServer {
   }
 
   private async listVersions(args: any) {
-    const { dandiset_id, page, page_size } = args;
+    const { api_base_url, dandiset_id, page, page_size } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     const params = new URLSearchParams();
     
     if (page) params.append('page', String(page));
     if (page_size) params.append('page_size', String(page_size));
 
-    const response = await this.axios.get(`/dandisets/${dandiset_id}/versions/?${params.toString()}`);
+    const response = await axios.get(`/dandisets/${dandiset_id}/versions/?${params.toString()}`);
     
     return {
       content: [{
@@ -564,8 +649,9 @@ class DandiMcpServer {
   }
 
   private async getVersion(args: any) {
-    const { dandiset_id, version } = args;
-    const response = await this.axios.get(`/dandisets/${dandiset_id}/versions/${version}/`);
+    const { api_base_url, dandiset_id, version } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get(`/dandisets/${dandiset_id}/versions/${version}/`);
     
     return {
       content: [{
@@ -576,13 +662,14 @@ class DandiMcpServer {
   }
 
   private async updateVersion(args: any) {
-    const { dandiset_id, version, name, metadata } = args;
+    const { api_base_url, dandiset_id, version, name, metadata } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     const updateData: any = {};
     
     if (name) updateData.name = name;
     if (metadata) updateData.metadata = metadata;
 
-    const response = await this.axios.put(`/dandisets/${dandiset_id}/versions/${version}/`, updateData);
+    const response = await axios.put(`/dandisets/${dandiset_id}/versions/${version}/`, updateData);
     
     return {
       content: [{
@@ -593,8 +680,9 @@ class DandiMcpServer {
   }
 
   private async publishVersion(args: any) {
-    const { dandiset_id, version } = args;
-    const response = await this.axios.post(`/dandisets/${dandiset_id}/versions/${version}/publish/`);
+    const { api_base_url, dandiset_id, version } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.post(`/dandisets/${dandiset_id}/versions/${version}/publish/`);
     
     return {
       content: [{
@@ -605,7 +693,8 @@ class DandiMcpServer {
   }
 
   private async listAssets(args: any) {
-    const { dandiset_id, version, page, page_size, glob, metadata = false, zarr = false } = args;
+    const { api_base_url, dandiset_id, version, page, page_size, glob, metadata = false, zarr = false } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     const params = new URLSearchParams();
     
     if (page) params.append('page', String(page));
@@ -614,7 +703,7 @@ class DandiMcpServer {
     if (metadata) params.append('metadata', String(metadata));
     if (zarr) params.append('zarr', String(zarr));
 
-    const response = await this.axios.get(`/dandisets/${dandiset_id}/versions/${version}/assets/?${params.toString()}`);
+    const response = await axios.get(`/dandisets/${dandiset_id}/versions/${version}/assets/?${params.toString()}`);
     
     return {
       content: [{
@@ -625,8 +714,9 @@ class DandiMcpServer {
   }
 
   private async getAsset(args: any) {
-    const { asset_id } = args;
-    const response = await this.axios.get(`/assets/${asset_id}/`);
+    const { api_base_url, asset_id } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get(`/assets/${asset_id}/`);
     
     return {
       content: [{
@@ -637,11 +727,12 @@ class DandiMcpServer {
   }
 
   private async getAssetDownloadUrl(args: any) {
-    const { asset_id, content_disposition = "attachment" } = args;
+    const { api_base_url, asset_id, content_disposition = "attachment" } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     const params = new URLSearchParams();
     params.append('content_disposition', content_disposition);
 
-    const response = await this.axios.get(`/assets/${asset_id}/download/?${params.toString()}`, {
+    const response = await axios.get(`/assets/${asset_id}/download/?${params.toString()}`, {
       maxRedirects: 0,
       validateStatus: (status) => status === 301,
     });
@@ -657,8 +748,9 @@ class DandiMcpServer {
   }
 
   private async getAssetValidation(args: any) {
-    const { dandiset_id, version, asset_id } = args;
-    const response = await this.axios.get(`/dandisets/${dandiset_id}/versions/${version}/assets/${asset_id}/validation/`);
+    const { api_base_url, dandiset_id, version, asset_id } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get(`/dandisets/${dandiset_id}/versions/${version}/assets/${asset_id}/validation/`);
     
     return {
       content: [{
@@ -668,8 +760,10 @@ class DandiMcpServer {
     };
   }
 
-  private async getCurrentUser() {
-    const response = await this.axios.get('/users/me/');
+  private async getCurrentUser(args: any = {}) {
+    const { api_base_url } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get('/users/me/');
     
     return {
       content: [{
@@ -680,11 +774,12 @@ class DandiMcpServer {
   }
 
   private async searchUsers(args: any) {
-    const { username } = args;
+    const { api_base_url, username } = args;
+    const axios = this.getAxiosInstance(api_base_url);
     const params = new URLSearchParams();
     params.append('username', username);
 
-    const response = await this.axios.get(`/users/search/?${params.toString()}`);
+    const response = await axios.get(`/users/search/?${params.toString()}`);
     
     return {
       content: [{
@@ -694,8 +789,10 @@ class DandiMcpServer {
     };
   }
 
-  private async getInfo() {
-    const response = await this.axios.get('/info/');
+  private async getInfo(args: any = {}) {
+    const { api_base_url } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get('/info/');
     
     return {
       content: [{
@@ -705,8 +802,10 @@ class DandiMcpServer {
     };
   }
 
-  private async getStats() {
-    const response = await this.axios.get('/stats/');
+  private async getStats(args: any = {}) {
+    const { api_base_url } = args;
+    const axios = this.getAxiosInstance(api_base_url);
+    const response = await axios.get('/stats/');
     
     return {
       content: [{
@@ -714,6 +813,262 @@ class DandiMcpServer {
         text: JSON.stringify(response.data, null, 2),
       }],
     };
+  }
+
+  // LLM-powered metadata enhancement
+  private async enhanceDandisetMetadata(args: any) {
+    const { 
+      current_metadata, 
+      modification_request, 
+      llm_provider = "gemini-flash" 
+    } = args;
+
+    // Validate LLM provider availability
+    if (llm_provider === "gemini-flash" && !genAI) {
+      throw new McpError(
+        ErrorCode.InvalidRequest, 
+        "Gemini API key not configured. Please set GEMINI_API_KEY environment variable."
+      );
+    }
+
+    try {
+      // Generate enhancement using LLM
+      const enhancedMetadata = await this.generateMetadataEnhancement(
+        current_metadata,
+        modification_request,
+        llm_provider
+      );
+
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(enhancedMetadata, null, 2),
+        }],
+      };
+
+    } catch (error: any) {
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Failed to enhance metadata: ${error.message}`
+      );
+    }
+  }
+
+  // Helper method to load schema for specific focus area
+  private async getSchemaForFocusArea(focusArea: string): Promise<any> {
+    const schemaMap: { [key: string]: string } = {
+      "contributors": "contributor.schema.json",
+      "description": "dandiset.schema.json", 
+      "keywords": "dandiset.schema.json",
+      "subjects": "dandiset.schema.json",
+      "resources": "resource.schema.json",
+      "general": "dandiset.schema.json"
+    };
+
+    const schemaFile = schemaMap[focusArea] || "dandiset.schema.json";
+    const schemaPath = path.join(schemasDir, schemaFile);
+
+    try {
+      const schemaContent = fs.readFileSync(schemaPath, 'utf8');
+      return JSON.parse(schemaContent);
+    } catch (error) {
+      console.error(`Failed to load schema ${schemaFile}:`, error);
+      // Return a minimal schema if file doesn't exist
+      return {
+        type: "object",
+        properties: {},
+        additionalProperties: true
+      };
+    }
+  }
+
+  // Generate metadata enhancement using LLM
+  private async generateMetadataEnhancement(
+    currentMetadata: any,
+    modificationRequest: string,
+    llmProvider: string
+  ): Promise<any> {
+    
+    if (llmProvider === "gemini-flash" && genAI) {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
+      });
+
+      const prompt = this.buildEnhancementPrompt(
+        currentMetadata,
+        modificationRequest
+      );
+
+      console.error(`[DEBUG] Prompt length: ${prompt.length}`);
+      
+      let responseText = '';
+      try {
+        const result = await model.generateContent(prompt);
+        responseText = result.response.text();
+        
+        console.error(`[DEBUG] Response length: ${responseText.length}`);
+        console.error(`[DEBUG] Response preview: ${responseText.substring(0, 200)}...`);
+        
+        const enhancedData = JSON.parse(responseText);
+        
+        // Return enhanced data directly
+        return enhancedData;
+        
+      } catch (parseError: any) {
+        console.error(`[DEBUG] JSON parsing failed:`, parseError.message);
+        console.error(`[DEBUG] Raw response:`, responseText?.substring(0, 1000));
+        throw new Error(`Failed to parse LLM response: ${parseError.message}`);
+      }
+    }
+
+    throw new Error(`Unsupported LLM provider: ${llmProvider}`);
+  }
+
+  // Simplify schema for LLM compatibility  
+  private simplifySchemaForLLM(schema: any, focusArea: string): any {
+    // Create a simplified schema based on focus area
+    switch (focusArea) {
+      case "contributors":
+        return {
+          type: "object",
+          properties: {
+            contributor: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  schemaKey: { type: "string", enum: ["Person", "Organization"] },
+                  name: { type: "string" },
+                  email: { type: "string" },
+                  roleName: { 
+                    type: "array", 
+                    items: { 
+                      type: "string",
+                      enum: ["dcite:Author", "dcite:ContactPerson", "dcite:DataCollector", "dcite:DataCurator", "dcite:DataManager", "dcite:Distributor", "dcite:Editor", "dcite:Funder", "dcite:HostingInstitution", "dcite:Producer", "dcite:ProjectLeader", "dcite:ProjectManager", "dcite:ProjectMember", "dcite:RegistrationAgency", "dcite:RegistrationAuthority", "dcite:RelatedPerson", "dcite:Researcher", "dcite:ResearchGroup", "dcite:RightsHolder", "dcite:Sponsor", "dcite:Supervisor", "dcite:WorkPackageLeader", "dcite:Other"]
+                    }
+                  },
+                  affiliation: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        schemaKey: { type: "string", enum: ["Affiliation"] },
+                        name: { type: "string" }
+                      }
+                    }
+                  }
+                },
+                required: ["schemaKey", "name"]
+              }
+            }
+          }
+        };
+
+      case "description":
+        return {
+          type: "object",
+          properties: {
+            description: { type: "string" },
+            name: { type: "string" }
+          }
+        };
+
+      case "keywords":
+        return {
+          type: "object", 
+          properties: {
+            keywords: {
+              type: "array",
+              items: { type: "string" }
+            }
+          }
+        };
+
+      default:
+        // Simplified general schema
+        return {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+            keywords: { 
+              type: "array", 
+              items: { type: "string" } 
+            },
+            contributor: { type: "array", items: { type: "object" } }
+          },
+          additionalProperties: true
+        };
+    }
+  }
+
+  // Build enhancement prompt for LLM
+  private buildEnhancementPrompt(
+    currentMetadata: any,
+    modificationRequest: string
+  ): string {
+    return `You are an expert in DANDI (Distributed Archives for Neurophysiology Data Integration) metadata enhancement.
+
+TASK: Enhance the following DANDI dandiset metadata based on the user's request.
+
+CURRENT METADATA:
+${JSON.stringify(currentMetadata, null, 2)}
+
+USER'S MODIFICATION REQUEST:
+${modificationRequest}
+
+INSTRUCTIONS:
+1. Analyze the current metadata and the user's request
+2. Generate enhanced/modified metadata that addresses the request
+3. Ensure all output follows DANDI schema standards
+4. For contributors, use proper DANDI role names (dcite: prefixed)
+5. Maintain existing data unless explicitly requested to change
+6. Return the complete enhanced metadata object
+
+IMPORTANT CONSTRAINTS:
+- Preserve all required DANDI schema fields
+- Use valid controlled vocabulary terms where applicable
+- Ensure contributor roles use dcite: namespace
+- Maintain proper data types (strings, arrays, objects)
+- Do not invent information - enhance based on provided context only
+
+Please provide the enhanced metadata as a valid JSON object:`;
+  }
+
+  // Merge enhanced metadata with original
+  private mergeMetadata(original: any, enhanced: any, focusArea: string): any {
+    const result = { ...original };
+
+    switch (focusArea) {
+      case "contributors":
+        if (enhanced.contributor) {
+          result.contributor = enhanced.contributor;
+        }
+        break;
+      
+      case "description":
+        if (enhanced.description) result.description = enhanced.description;
+        if (enhanced.name) result.name = enhanced.name;
+        break;
+
+      case "keywords":
+        if (enhanced.keywords) result.keywords = enhanced.keywords;
+        break;
+
+      default:
+        // General merge - carefully merge all provided fields
+        Object.keys(enhanced).forEach(key => {
+          if (enhanced[key] !== undefined && enhanced[key] !== null) {
+            result[key] = enhanced[key];
+          }
+        });
+        break;
+    }
+
+    return result;
   }
 
   // Error handling helper

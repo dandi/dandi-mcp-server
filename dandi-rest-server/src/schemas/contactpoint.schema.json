@@ -1,0 +1,60 @@
+{
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "ContactPoint",
+      "default": "ContactPoint",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "email": {
+      "anyOf": [
+        {
+          "format": "email",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Email address of contact.",
+      "nskey": "schema",
+      "title": "Email"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "A Web page to find information on how to contact.",
+      "nskey": "schema",
+      "title": "URL"
+    }
+  },
+  "required": [
+    "schemaKey"
+  ],
+  "title": "Contact Point",
+  "type": "object"
+}

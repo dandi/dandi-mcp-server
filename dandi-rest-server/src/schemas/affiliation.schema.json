@@ -1,0 +1,51 @@
+{
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Affiliation",
+      "default": "Affiliation",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "pattern": "^https://ror.org/[a-z0-9]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Use an ror.org identifier for institutions.",
+      "nskey": "schema",
+      "title": "A ror.org identifier"
+    },
+    "name": {
+      "description": "Name of organization",
+      "nskey": "schema",
+      "title": "Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "schemaKey"
+  ],
+  "title": "Affiliation",
+  "type": "object"
+}

@@ -1,0 +1,238 @@
+{
+  "$defs": {
+    "ContactPoint": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uniform resource identifier",
+          "readOnly": true,
+          "title": "ID"
+        },
+        "schemaKey": {
+          "const": "ContactPoint",
+          "default": "ContactPoint",
+          "title": "Schema Key",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of contact.",
+          "nskey": "schema",
+          "title": "Email"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A Web page to find information on how to contact.",
+          "nskey": "schema",
+          "title": "URL"
+        }
+      },
+      "required": [
+        "schemaKey"
+      ],
+      "title": "Contact Point",
+      "type": "object"
+    },
+    "RoleType": {
+      "description": "An enumeration of roles",
+      "enum": [
+        "dcite:Author",
+        "dcite:Conceptualization",
+        "dcite:ContactPerson",
+        "dcite:DataCollector",
+        "dcite:DataCurator",
+        "dcite:DataManager",
+        "dcite:FormalAnalysis",
+        "dcite:FundingAcquisition",
+        "dcite:Investigation",
+        "dcite:Maintainer",
+        "dcite:Methodology",
+        "dcite:Producer",
+        "dcite:ProjectLeader",
+        "dcite:ProjectManager",
+        "dcite:ProjectMember",
+        "dcite:ProjectAdministration",
+        "dcite:Researcher",
+        "dcite:Resources",
+        "dcite:Software",
+        "dcite:Supervision",
+        "dcite:Validation",
+        "dcite:Visualization",
+        "dcite:Funder",
+        "dcite:Sponsor",
+        "dcite:StudyParticipant",
+        "dcite:Affiliation",
+        "dcite:EthicsApproval",
+        "dcite:Other"
+      ],
+      "title": "RoleType",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Uniform resource identifier",
+      "readOnly": true,
+      "title": "ID"
+    },
+    "schemaKey": {
+      "const": "Organization",
+      "default": "Organization",
+      "title": "Schema Key",
+      "type": "string"
+    },
+    "identifier": {
+      "anyOf": [
+        {
+          "pattern": "^https://ror.org/[a-z0-9]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Use an ror.org identifier for institutions.",
+      "nskey": "schema",
+      "title": "A ror.org identifier"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Name"
+    },
+    "email": {
+      "anyOf": [
+        {
+          "format": "email",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "Email"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "nskey": "schema",
+      "title": "URL"
+    },
+    "roleName": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/RoleType"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Role(s) of the contributor. Multiple roles can be selected.",
+      "nskey": "schema",
+      "title": "Role"
+    },
+    "includeInCitation": {
+      "default": false,
+      "description": "A flag to indicate whether a contributor should be included when generating a citation for the item",
+      "nskey": "dandi",
+      "title": "Include contributor in citation",
+      "type": "boolean"
+    },
+    "awardNumber": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Identifier associated with a sponsored or gift award.",
+      "nskey": "dandi",
+      "title": "Identifier for an award"
+    },
+    "contactPoint": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/ContactPoint"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Contact for the organization",
+      "nskey": "schema",
+      "title": "Organization contact information"
+    }
+  },
+  "required": [
+    "schemaKey"
+  ],
+  "title": "Organization",
+  "type": "object"
+}
