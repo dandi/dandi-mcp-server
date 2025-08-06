@@ -23,6 +23,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import axios, { AxiosInstance, AxiosError } from "axios";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Ajv, { type ErrorObject } from "ajv";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -682,7 +683,20 @@ class DandiMcpServer {
     const updateData: any = {};
     
     if (name) updateData.name = name;
-    if (metadata) updateData.metadata = metadata;
+    if (metadata) {
+      // Validate metadata against DANDI schema before uploading
+      const validationResult = await this.validateMetadata(metadata);
+      
+      if (!validationResult.valid) {
+        const errorMessage = validationResult.errors?.join('\n') || 'Unknown validation errors';
+        throw new McpError(
+          ErrorCode.InvalidParams, 
+          `Metadata validation failed:\n${errorMessage}`
+        );
+      }
+      
+      updateData.metadata = metadata;
+    }
 
     const response = await axios.put(`/dandisets/${dandiset_id}/versions/${version}/`, updateData);
     
@@ -920,6 +934,46 @@ class DandiMcpServer {
         ErrorCode.InternalError,
         `Failed to enhance metadata: ${error.message}`
       );
+    }
+  }
+
+  // Helper method to validate metadata against DANDI schema
+  private async validateMetadata(metadata: any): Promise<{ valid: boolean; errors?: string[] }> {
+    try {
+      const schemaPath = path.join(schemasDir, "dandiset.schema.json");
+      const schemaContent = fs.readFileSync(schemaPath, 'utf8');
+      const schema = JSON.parse(schemaContent);
+      
+      const ajv = new (Ajv as any)({ 
+        strict: false, 
+        allErrors: true,
+        verbose: true 
+      });
+      
+      const validate = ajv.compile(schema);
+      const valid = validate(metadata);
+      
+      if (!valid && validate.errors) {
+        const errors = validate.errors.map((error: ErrorObject) => {
+          const instancePath = error.instancePath || 'root';
+          const message = error.message || 'validation error';
+          const allowedValues = error.params?.allowedValues 
+            ? ` (allowed values: ${error.params.allowedValues.join(', ')})` 
+            : '';
+          return `${instancePath}: ${message}${allowedValues}`;
+        });
+        
+        return { valid: false, errors };
+      }
+      
+      return { valid: true };
+      
+    } catch (error: any) {
+      console.error('Schema validation error:', error);
+      return { 
+        valid: false, 
+        errors: [`Schema validation failed: ${error.message}`] 
+      };
     }
   }
 

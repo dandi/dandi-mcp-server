@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "extract-schema": "cd scripts && python3 -m pip install -r requirements.txt --break-system-packages && python3 extract_schema.py",
-    "build": "npm run extract-schema && tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "build-only": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "npm run extract-schema && tsc && cp -r src/schemas build/ && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build-only": "tsc && cp -r src/schemas build/ && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "prepare": "npm run build-only",
     "watch": "tsc --watch",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js"
