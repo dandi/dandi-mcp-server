@@ -292,17 +292,17 @@ class DandiMcpServer {
         },
         {
           name: "update_version",
-          description: "Update metadata of a version",
+          description: "Update metadata of a version. Note: The 'name' field is required by the DANDI API even when only updating metadata.",
           inputSchema: {
             type: "object",
             properties: {
               api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
               version: { type: "string", description: "Version identifier" },
-              name: { type: "string", description: "New name for the version" },
+              name: { type: "string", description: "Name for the version (required by DANDI API)" },
               metadata: { type: "object", description: "Updated metadata" },
             },
-            required: ["dandiset_id", "version"],
+            required: ["dandiset_id", "version", "name"],
           },
         },
         {
@@ -1076,10 +1076,13 @@ Please provide the enhanced metadata as a valid JSON object:`;
     if (axios.isAxiosError(error)) {
       const status = error.response?.status;
       const message = error.response?.data?.detail || error.response?.data?.message || error.message;
+      const fullErrorData = error.response?.data;
       
       switch (status) {
         case 400:
-          return new McpError(ErrorCode.InvalidParams, `Bad Request: ${message}`);
+          // Include full error response for 400 errors to help with debugging
+          const fullErrorMessage = fullErrorData ? JSON.stringify(fullErrorData, null, 2) : message;
+          return new McpError(ErrorCode.InvalidParams, `Bad Request: ${message}\n\nFull error response:\n${fullErrorMessage}`);
         case 401:
           return new McpError(ErrorCode.InvalidRequest, `Unauthorized: ${message}. Make sure DANDI_API_TOKEN is set if authentication is required.`);
         case 403:
