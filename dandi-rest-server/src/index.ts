@@ -6,6 +6,9 @@
  * This MCP server provides comprehensive access to the DANDI Archive REST API,
  * allowing users to interact with dandisets, assets, versions, and other resources
  * in the BRAIN Initiative archive for cellular neurophysiology data.
+ * 
+ * Note: All metadata modifications are performed on the "draft" version only,
+ * as published versions are immutable.
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -292,17 +295,16 @@ class DandiMcpServer {
         },
         {
           name: "update_version",
-          description: "Update metadata of a version. Note: The 'name' field is required by the DANDI API even when only updating metadata.",
+          description: "Update metadata of a draft version. Note: Metadata modifications can only be done on draft versions. The 'name' field is required by the DANDI API even when only updating metadata.",
           inputSchema: {
             type: "object",
             properties: {
               api_base_url: { type: "string", description: "Custom API base URL (optional)" },
               dandiset_id: { type: "string", description: "Dandiset identifier" },
-              version: { type: "string", description: "Version identifier" },
               name: { type: "string", description: "Name for the version (required by DANDI API)" },
               metadata: { type: "object", description: "Updated metadata" },
             },
-            required: ["dandiset_id", "version", "name"],
+            required: ["dandiset_id", "name"],
           },
         },
         {
@@ -428,7 +430,7 @@ class DandiMcpServer {
         // LLM-powered metadata enhancement
         {
           name: "enhance_dandiset_metadata",
-          description: "Use LLM to enhance dandiset metadata based on text descriptions of requested modifications. Can either fetch metadata automatically using dandiset_id or accept current_metadata directly.",
+          description: "Use LLM to enhance dandiset metadata based on text descriptions of requested modifications. Metadata modifications are always performed on the draft version. Can either fetch metadata automatically using dandiset_id or accept current_metadata directly.",
           inputSchema: {
             type: "object",
             properties: {
@@ -438,12 +440,7 @@ class DandiMcpServer {
               },
               dandiset_id: {
                 type: "string",
-                description: "Dandiset identifier (6 digits) - used to fetch metadata automatically"
-              },
-              version: {
-                type: "string",
-                description: "Version identifier (e.g., 'draft' or '0.230101.1234')",
-                default: "draft"
+                description: "Dandiset identifier (6 digits) - used to fetch draft metadata automatically"
               },
               current_metadata: {
                 type: "object",
@@ -679,8 +676,9 @@ class DandiMcpServer {
   }
 
   private async updateVersion(args: any) {
-    const { api_base_url, dandiset_id, version, name, metadata } = args;
+    const { api_base_url, dandiset_id, name, metadata } = args;
     const axios = this.getAxiosInstance(api_base_url);
+    const version = "draft"; // Force all metadata modifications to target draft version
     const updateData: any = {};
     
     if (name) updateData.name = name;
@@ -691,7 +689,7 @@ class DandiMcpServer {
     return {
       content: [{
         type: "text",
-        text: `Successfully updated version: ${JSON.stringify(response.data, null, 2)}`,
+        text: `Successfully updated draft version: ${JSON.stringify(response.data, null, 2)}`,
       }],
     };
   }
@@ -837,11 +835,13 @@ class DandiMcpServer {
     const { 
       api_base_url,
       dandiset_id,
-      version = "draft",
       current_metadata, 
       modification_request, 
       llm_provider = "gemini-flash" 
     } = args;
+
+    // Always use draft version for metadata modifications
+    const version = "draft";
 
     // Validate LLM provider availability
     if (llm_provider === "gemini-flash" && !genAI) {
