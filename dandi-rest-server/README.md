@@ -69,7 +69,7 @@ For operations that require authentication (creating, updating, deleting dandise
 Configure the server in your MCP settings. For example, for VS Code, this is typically done in the `cline_mcp_settings.json` file:
 
 ```json
-    "dandi-rest-api": {
+    "dandi-mcp": {
       "autoApprove": [],
       "disabled": false,
       "timeout": 60,
